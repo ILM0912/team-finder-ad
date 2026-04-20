@@ -21,7 +21,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'projects.apps.ProjectsConfig',
 ]
+
+AUTH_USER_MODEL = 'projects.User'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -38,7 +41,9 @@ ROOT_URLCONF = "team_finder.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / f"templates_var{config('TASK_VERSION', default='1')}"],
+        "DIRS": [
+            BASE_DIR / f"templates_var{config('TASK_VERSION', default='1')}"
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -76,16 +81,28 @@ if not DEBUG:
     AUTH_PASSWORD_VALIDATORS.extend(
         [
             {
-                "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+                "NAME": (
+                    "django.contrib.auth.password_validation."
+                    "UserAttributeSimilarityValidator"
+                ),
             },
             {
-                "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+                "NAME": (
+                    "django.contrib.auth.password_validation."
+                    "MinimumLengthValidator"
+                ),
             },
             {
-                "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+                "NAME": (
+                    "django.contrib.auth.password_validation."
+                    "CommonPasswordValidator"
+                ),
             },
             {
-                "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+                "NAME": (
+                    "django.contrib.auth.password_validation."
+                    "NumericPasswordValidator"
+                ),
             },
         ]
     )
@@ -93,7 +110,7 @@ if not DEBUG:
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-RU"
 
 TIME_ZONE = "UTC"
 
