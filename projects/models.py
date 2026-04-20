@@ -89,6 +89,9 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.name} {self.surname}'
 
+    class Meta:
+        ordering = ["id"]
+
 
 class Project(models.Model):
     STATUS_CHOICES = [('open', 'Open'), ('closed', 'Closed')]

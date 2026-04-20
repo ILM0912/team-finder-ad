@@ -1,15 +1,16 @@
 from django.urls import path
 
-from . import views
+from .views import projects_views, users_views
 
 app_name = 'projects'
 
 urlpatterns = [
-    path('', views.index_redirect, name='index'),
-    path('projects/list/', views.project_list, name='project_list'),
+    path('', projects_views.index_redirect, name='index'),
+    path('projects/list/', projects_views.project_list, name='project_list'),
     path(
         'projects/<int:project_id>/toggle-favorite/',
-        views.toggle_favorite,
+        projects_views.toggle_favorite,
         name='toggle_favorite',
     ),
+    path('users/list/', users_views.participants_list, name='participants_list'),
 ]
