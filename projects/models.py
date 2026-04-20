@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from .validators import validate_github_profile, validate_github_repo
+from .utils import generate_avatar
 
 
 class UserManager(BaseUserManager):
@@ -69,6 +70,10 @@ class User(AbstractUser):
     objects = UserManager()
 
     def save(self, *args, **kwargs):
+        if not self.avatar and self.name:
+            avatar = generate_avatar(self.name[0]+self.surname[0])
+            self.avatar.save(f"{self.email}_avatar.png", avatar, save=False)
+
         if self.phone:
             if self.phone.startswith('8'):
                 self.phone = '+7' + self.phone[1:]
