@@ -14,14 +14,20 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Личные данные', {'fields': ('name', 'surname', 'avatar', 'phone', 'github_url', 'about')}),
+        ('Личные данные', {
+            'fields': (
+                'name', 'surname', 'avatar', 'phone', 'github_url', 'about'
+            )
+        }),
         ('Избранное', {'fields': ('favorites',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'name', 'surname', 'phone', 'password1', 'password2'),
+            'fields': (
+                'email', 'name', 'surname', 'phone', 'password1', 'password2'
+            ),
         }),
     )
 
