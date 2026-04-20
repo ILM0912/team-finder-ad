@@ -18,6 +18,14 @@ def project_list(request):
 
 
 @login_required
+def favorite_projects(request):
+    projects = request.user.favorites.all()
+    template = 'projects/favorite_projects.html'
+    context = {'projects': projects}
+    return render(request, template, context)
+
+
+@login_required
 @require_POST
 def toggle_favorite(request, project_id):
     project = get_object_or_404(Project, id=project_id)
