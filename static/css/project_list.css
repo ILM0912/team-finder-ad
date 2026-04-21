@@ -140,12 +140,13 @@
 .collapsed-project-grid {
     display: grid;
     gap: 24px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     background: white;
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .collapsed-project-card {
@@ -156,7 +157,6 @@
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 20px;
-    width: calc(100% - 36spx);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     flex-direction: column;
     justify-content: space-between;
@@ -170,10 +170,16 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: flex-start;
 }
 
 .collapsed-project-card-header h4 {
     margin: 0;
+    flex: 1 1 auto;
+    max-width: calc(100% - 110px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .collapsed-project-card-body {

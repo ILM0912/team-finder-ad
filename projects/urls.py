@@ -37,4 +37,9 @@ urlpatterns = [
         users_views.participants_list,
         name='participants_list'
     ),
+    path(
+        'users/<int:user_id>/',
+        users_views.user_details,
+        name='user_details'
+    ),
 ]

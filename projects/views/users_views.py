@@ -1,5 +1,5 @@
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from ..models import User
 
@@ -10,6 +10,15 @@ USER_FILTERS = [
     'interested-in-my-projects',
     'participants-of-my-projects',
 ]
+
+
+def user_details(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    template = 'users/user-details.html'
+    context = {
+        'user': user
+    }
+    return render(request, template, context)
 
 
 def participants_list(request):
@@ -38,8 +47,9 @@ def participants_list(request):
     else:
         participants = User.objects.all().order_by('id')
 
+    template = 'users/participants.html'
     context = {
         'participants': participants,
         'active_filter': active_filter,
     }
-    return render(request, 'users/participants.html', context)
+    return render(request, template, context)
