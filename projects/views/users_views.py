@@ -13,30 +13,30 @@ USER_FILTERS = [
 
 
 def participants_list(request):
-    participants = User.objects.all()
     active_filter = request.GET.get('filter')
 
     if request.user.is_authenticated and active_filter in USER_FILTERS:
-
         if active_filter == 'owners-of-favorite-projects':
             participants = User.objects.filter(
                 owned_projects__in=request.user.favorites.all()
-            ).distinct()
+            ).distinct().order_by('id')
 
         elif active_filter == 'owners-of-participating-projects':
             participants = User.objects.filter(
                 owned_projects__participants=request.user
-            ).distinct()
+            ).exclude(id=request.user.id).distinct().order_by('id')
 
         elif active_filter == 'interested-in-my-projects':
             participants = User.objects.filter(
                 favorites__owner=request.user
-            ).distinct()
+            ).distinct().order_by('id')
 
         elif active_filter == 'participants-of-my-projects':
             participants = User.objects.filter(
                 participated_projects__owner=request.user
-            ).exclude(id=request.user.id).distinct()
+            ).exclude(id=request.user.id).distinct().order_by('id')
+    else:
+        participants = User.objects.all().order_by('id')
 
     context = {
         'participants': participants,

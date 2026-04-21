@@ -17,6 +17,13 @@ def project_list(request):
     return render(request, template, context)
 
 
+def project_details(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    template = 'projects/project-details.html'
+    context = {'project': project}
+    return render(request, template, context)
+
+
 @login_required
 def favorite_projects(request):
     projects = request.user.favorites.all()
@@ -39,4 +46,52 @@ def toggle_favorite(request, project_id):
     return JsonResponse({
         'status': 'ok',
         'favorited': favorited,
+    })
+
+
+@login_required
+@require_POST
+def complete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if project.owner != request.user or project.status != 'open':
+        return JsonResponse({
+            "status": "error",
+            "message": "Не выполнены условия"
+        })
+
+    project.status = 'closed'
+    project.save()
+    return JsonResponse({
+        "status": "ok",
+        "project_status": "closed"
+    })
+
+
+@login_required
+@require_POST
+def toggle_participate(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if project.status != 'open':
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Проект уже закрыт!'
+        })
+    if project.owner == request.user:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Нельзя покидать свой проект!'
+        })
+
+    if project.participants.filter(id=request.user.id).exists():
+        project.participants.remove(request.user)
+        participant = False
+    else:
+        project.participants.add(request.user)
+        participant = True
+
+    return JsonResponse({
+        'status': 'ok',
+        'participant': participant
     })
