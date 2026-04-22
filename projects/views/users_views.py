@@ -1,7 +1,9 @@
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth import login, authenticate
 
 from ..models import User
+from ..forms import RegisterForm, LoginForm
 
 
 USER_FILTERS = [
@@ -52,4 +54,38 @@ def participants_list(request):
         'participants': participants,
         'active_filter': active_filter,
     }
+    return render(request, template, context)
+
+
+def register_user(request):
+    template = 'users/register.html'
+    form = RegisterForm(request.POST or None)
+    context = {'form': form}
+
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password'])
+        user.save()
+        login(request, user)
+        return redirect('projects:project_list')
+
+    return render(request, template, context)
+
+
+def login_user(request):
+    template = 'users/login.html'
+    form = LoginForm(request.POST or None)
+    context = {'form': form}
+    if form.is_valid():
+        user = authenticate(
+            request,
+            email=form.cleaned_data['email'],
+            password=form.cleaned_data['password']
+        )
+
+        if user is not None:
+            login(request, user)
+            return redirect('projects:project_list')
+        form.add_error(None, 'Неверный email или пароль.')
+
     return render(request, template, context)
