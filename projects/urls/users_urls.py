@@ -25,4 +25,14 @@ urlpatterns = [
         users_views.login_user,
         name='login'
     ),
+    path(
+        'logout/',
+        users_views.logout_user,
+        name='logout'
+    ),
+    path(
+        'change-password/',
+        users_views.change_password,
+        name='change-password'
+    ),
 ]

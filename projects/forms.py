@@ -18,3 +18,15 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         widget=forms.PasswordInput()
     )
+
+
+class ChangePasswordForm(forms.Form):
+    old_password = forms.CharField(
+        widget=forms.PasswordInput()
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput()
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput()
+    )

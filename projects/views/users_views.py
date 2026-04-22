@@ -1,9 +1,11 @@
 
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET
 
 from ..models import User
-from ..forms import RegisterForm, LoginForm
+from ..forms import RegisterForm, LoginForm, ChangePasswordForm
 
 
 USER_FILTERS = [
@@ -89,3 +91,34 @@ def login_user(request):
         form.add_error(None, 'Неверный email или пароль.')
 
     return render(request, template, context)
+
+
+@login_required
+def change_password(request):
+    template = 'users/change_password.html'
+    form = ChangePasswordForm(request.POST or None)
+    context = {'form': form}
+
+    if form.is_valid():
+        old_password = form.cleaned_data['old_password']
+        new_password1 = form.cleaned_data['new_password1']
+        new_password2 = form.cleaned_data['new_password2']
+
+        if not request.user.check_password(old_password):
+            form.add_error('old_password', 'Неверный старый пароль')
+        elif new_password1 != new_password2:
+            form.add_error('new_password2', 'Пароли не совпадают')
+        else:
+            request.user.set_password(new_password1)
+            request.user.save()
+            login(request, request.user)
+            return redirect('users:user_details', user_id=request.user.id)
+
+    return render(request, template, context)
+
+
+@login_required
+@require_GET
+def logout_user(request):
+    logout(request)
+    return redirect('projects:project_list')
