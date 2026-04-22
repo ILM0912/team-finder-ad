@@ -18,6 +18,16 @@
         });
 
         if (response.ok) {
+          const likesCount = document.getElementById("likes-count");
+          if (likesCount) {
+              let currentCount = parseInt(likesCount.textContent);
+
+              if (isFav) {
+                  likesCount.textContent = currentCount - 1;
+              } else {
+                  likesCount.textContent = currentCount + 1;
+              }
+          }
           if (isFavoritesPage && isFav) {
             const card = button.closest(".project-card");
             card.remove();

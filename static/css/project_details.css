@@ -76,9 +76,22 @@
 
 .project-actions {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
-    justify-content: flex-end
+    flex-wrap: wrap;
+}
+
+.project-actions-left {
+    display: flex;
+    align-items: center;
+}
+
+.project-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: wrap;
 }
 
 .project-participants-card {
