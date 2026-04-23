@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
+from django.core.exceptions import ValidationError
 
 from ..models import User
-from ..forms import RegisterForm, LoginForm, ChangePasswordForm
+from ..forms import RegisterForm, LoginForm, ChangePasswordForm, EditProfileForm
 
 
 USER_FILTERS = [
@@ -122,3 +123,25 @@ def change_password(request):
 def logout_user(request):
     logout(request)
     return redirect('projects:project_list')
+
+
+@login_required
+def edit_profile(request):
+    template = 'users/edit_profile.html'
+    form = EditProfileForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=request.user
+    )
+    context = {'form': form}
+
+    if form.is_valid():
+        try:
+            form.save()
+            return redirect('users:user_details', user_id=request.user.id)
+        except ValidationError as error:
+            for field, errors in error.message_dict.items():
+                for err in errors:
+                    form.add_error(field, err)
+
+    return render(request, template, context)

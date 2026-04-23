@@ -41,12 +41,11 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', blank=True)
     phone = models.CharField(
         max_length=12,
-        unique=True,
         validators=[
             RegexValidator(
                 regex=r'^(\+7|8)\d{10}$',
                 message=(
-                    "Номер должен быть в формате"
+                    "Номер должен быть в формате "
                     "8XXXXXXXXXX или +7XXXXXXXXXX"
                 )
             )
@@ -91,7 +90,7 @@ class User(AbstractUser):
 
 
 class Project(models.Model):
-    STATUS_CHOICES = [('open', 'Open'), ('closed', 'Closed')]
+    STATUS_CHOICES = [('open', 'Открыт'), ('closed', 'Закрыт')]
 
     name = models.CharField(max_length=200, verbose_name='Название проекта')
     description = models.TextField(blank=True, verbose_name='Описание проекта')

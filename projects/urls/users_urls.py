@@ -35,4 +35,9 @@ urlpatterns = [
         users_views.change_password,
         name='change-password'
     ),
+    path(
+        'edit-profile/',
+        users_views.edit_profile,
+        name='edit-profile'
+    ),
 ]
