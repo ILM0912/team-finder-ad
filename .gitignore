@@ -146,4 +146,3 @@ dmypy.json
 .ruff_cache/
 
 *.Identifier
-media/

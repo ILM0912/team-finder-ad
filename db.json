@@ -11,7 +11,8 @@
         "is_active": true,
         "is_staff": true,
         "is_superuser": true,
-        "favorites": [1,2,3,5,6]
+        "favorites": [1,2,3,5,6],
+        "avatar": "avatars/senyayandex.ru_avatar.png"
     }
 },
 {
@@ -26,7 +27,8 @@
         "is_active": true,
         "is_staff": false,
         "is_superuser": false,
-        "favorites": [6]
+        "favorites": [6],
+        "avatar": "avatars/mashayandex.ru_avatar.png"
     }
 },
 {
@@ -41,7 +43,8 @@
         "is_active": true,
         "is_staff": false,
         "is_superuser": false,
-        "favorites": [2,5,6]
+        "favorites": [2,5,6],
+        "avatar": "avatars/igoryandex.ru_avatar.png"
     }
 },
 {
@@ -56,7 +59,8 @@
         "is_active": true,
         "is_staff": false,
         "is_superuser": false,
-        "favorites": [4,5,6]
+        "favorites": [4,5,6],
+        "avatar": "avatars/timayandex.ru_avatar.png"
     }
 },
 
@@ -78,7 +82,7 @@
     "pk": 2,
     "fields": {
         "name": "Приложение BAZAAR для доставки товаров",
-        "description": "Приложение BAZAAAR предоставляет удобный интерфейс для владельцев магазина, курьеров и клиентов для заказа и доставки товаров. Тимофей ничего не делал для приложения, Арсений помогал",
+        "description": "Приложение BAZAAR предоставляет удобный интерфейс для владельцев магазина, курьеров и клиентов для заказа и доставки товаров. Тимофей ничего не делал для приложения, Арсений помогал",
         "owner": 3,
         "created_at": "2026-04-04T10:00:00Z",
         "github_url": "https://github.com/Zhaglo/bazaar",
@@ -119,7 +123,7 @@
         "name": "Черемша",
         "description": "В Советском Союзе делали это тихо, не спеша, не дыша, не шиша",
         "owner": 3,
-        "created_at": "2026-ST10:00:00Z",
+        "created_at": "2026-04-04T10:00:00Z",
         "github_url": "",
         "status": "open",
         "participants": [3,1,4]

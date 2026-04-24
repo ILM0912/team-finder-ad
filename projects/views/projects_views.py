@@ -7,7 +7,6 @@ from ..models import Project
 from ..forms import ProjectForm
 
 
-
 def project_list(request):
     projects = Project.objects.all()
     template = 'projects/project_list.html'

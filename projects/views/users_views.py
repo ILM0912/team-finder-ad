@@ -6,7 +6,12 @@ from django.views.decorators.http import require_GET
 from django.core.exceptions import ValidationError
 
 from ..models import User
-from ..forms import RegisterForm, LoginForm, ChangePasswordForm, EditProfileForm
+from ..forms import (
+    RegisterForm,
+    LoginForm,
+    ChangePasswordForm,
+    EditProfileForm
+)
 
 
 USER_FILTERS = [

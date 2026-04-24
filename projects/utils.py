@@ -14,6 +14,9 @@ def generate_avatar(letters):
         "#D9ED92",
         "#F4A261",
         "#B8C0FF",
+        "#FFD1DC",
+        "#FFB28B",
+        "#E6E6FA"
     ]
     background = random.choice(colors)
     image = Image.new("RGB", size, background)
