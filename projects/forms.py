@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
+from .models import Project
+
+
 User = get_user_model()
 
 
@@ -55,4 +58,29 @@ class EditProfileForm(forms.ModelForm):
                 'class': 'hidden-file-input',
                 'accept': 'image/*'
             }),
+        }
+
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ('name', 'description', 'github_url', 'status')
+        labels = {
+            'name': 'Название',
+            'description': 'Описание проекта',
+            'github_url': 'Ссылка на GitHub',
+            'status': 'Статус',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'placeholder': 'Название проекта'
+            }),
+            'description': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Описание проекта'
+            }),
+            'github_url': forms.URLInput(attrs={
+                'placeholder': 'https://github.com/username/repo'
+            }),
+            'status': forms.Select(),
         }

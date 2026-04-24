@@ -31,4 +31,14 @@ urlpatterns = [
         projects_views.toggle_favorite,
         name='toggle_favorite',
     ),
+    path(
+        '<int:project_id>/edit/',
+        projects_views.edit_project,
+        name='edit_project',
+    ),
+    path(
+        'create-project/',
+        projects_views.create_project,
+        name='create_project',
+    ),
 ]

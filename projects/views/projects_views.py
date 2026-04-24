@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from ..models import Project
+from ..forms import ProjectForm
 
 
 
@@ -92,3 +93,35 @@ def toggle_participate(request, project_id):
         'status': 'ok',
         'participant': participant
     })
+
+
+@login_required
+def create_project(request):
+    template = 'projects/create-project.html'
+    form = ProjectForm(request.POST or None)
+    context = {
+        'form': form,
+        'is_edit': False,
+    }
+    if form.is_valid():
+        project = form.save(commit=False)
+        project.owner = request.user
+        project.save()
+        project.participants.add(request.user)
+        return redirect('projects:project_details', project_id=project.id)
+    return render(request, template, context)
+
+
+@login_required
+def edit_project(request, project_id):
+    template = 'projects/create-project.html'
+    project = get_object_or_404(Project, id=project_id)
+    form = ProjectForm(request.POST or None, instance=project)
+    context = {
+        'form': form,
+        'is_edit': True,
+    }
+    if form.is_valid():
+        project = form.save()
+        return redirect('projects:project_details', project_id=project.id)
+    return render(request, template, context)
