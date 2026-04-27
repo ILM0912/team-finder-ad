@@ -2,20 +2,34 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator
 
 from ..models import Project
 from ..forms import ProjectForm
+from ..constants import STATUS_OPEN
 
 
 def project_list(request):
-    projects = Project.objects.all()
+    projects = (Project.objects
+                .select_related('owner')
+                .prefetch_related('participants')
+                )
+    paginator = Paginator(projects, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     template = 'projects/project_list.html'
-    context = {'projects': projects}
+    context = {'projects': page_obj}
     return render(request, template, context)
 
 
 def project_details(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
+    project = get_object_or_404(
+        Project.objects
+        .select_related('owner')
+        .prefetch_related('participants', 'interested_users'),
+        id=project_id
+    )
     template = 'projects/project-details.html'
     context = {'project': project}
     return render(request, template, context)
@@ -23,7 +37,11 @@ def project_details(request, project_id):
 
 @login_required
 def favorite_projects(request):
-    projects = request.user.favorites.all()
+    projects = projects = (
+        request.user.favorites
+        .select_related('owner')
+        .prefetch_related('participants', 'interested_users')
+    )
     template = 'projects/favorite_projects.html'
     context = {'projects': projects}
     return render(request, template, context)
@@ -34,15 +52,13 @@ def favorite_projects(request):
 def toggle_favorite(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     user = request.user
-    if user.favorites.filter(id=project.id).exists():
+    if favorited := user.favorites.filter(id=project.id).exists():
         user.favorites.remove(project)
-        favorited = False
     else:
         user.favorites.add(project)
-        favorited = True
     return JsonResponse({
         'status': 'ok',
-        'favorited': favorited,
+        'favorited': not favorited,
     })
 
 
@@ -51,7 +67,7 @@ def toggle_favorite(request, project_id):
 def complete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if project.owner != request.user or project.status != 'open':
+    if project.owner != request.user or project.status != STATUS_OPEN:
         return JsonResponse({
             "status": "error",
             "message": "Не выполнены условия"
@@ -70,7 +86,7 @@ def complete_project(request, project_id):
 def toggle_participate(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if project.status != 'open':
+    if project.status != STATUS_OPEN:
         return JsonResponse({
             'status': 'error',
             'message': 'Проект уже закрыт!'
@@ -81,16 +97,14 @@ def toggle_participate(request, project_id):
             'message': 'Нельзя покидать свой проект!'
         })
 
-    if project.participants.filter(id=request.user.id).exists():
+    if participant := project.participants.filter(id=request.user.id).exists():
         project.participants.remove(request.user)
-        participant = False
     else:
         project.participants.add(request.user)
-        participant = True
 
     return JsonResponse({
         'status': 'ok',
-        'participant': participant
+        'participant': not participant
     })
 
 

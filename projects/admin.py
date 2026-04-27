@@ -55,5 +55,5 @@ class ProjectAdmin(admin.ModelAdmin):
 
     def participants_count(self, obj):
         return obj.participants.count()
-    
+
     participants_count.short_description = 'Кол-во участников'

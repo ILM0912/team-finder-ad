@@ -1,46 +1,41 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.urls import reverse
+
 from .validators import validate_github_profile, validate_github_repo
 from .utils import generate_avatar
-
-
-class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError('Поле email обязательно')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
-
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(
-                'Суперпользователь должен иметь is_staff=True'
-            )
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(
-                'Суперпользователь должен иметь is_superuser=True'
-            )
-
-        return self.create_user(email, password, **extra_fields)
+from .managers import UserManager
+from .constants import (
+    ABOUT_MAX_LENGTH,
+    NAME_MAX_LENGTH,
+    PHONE_MAX_LENGTH,
+    PROJECT_NAME_MAX_LENGTH,
+    PROJECT_STATUS_CHOICES,
+    PROJECT_STATUS_MAX_LENGTH,
+    STATUS_OPEN,
+    SURNAME_MAX_LENGTH,
+    USER_AVATAR_UPLOAD_TO,
+)
 
 
 class User(AbstractUser):
     username = None
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=124)
-    surname = models.CharField(max_length=124)
-    avatar = models.ImageField(upload_to='avatars/', blank=True)
+    email = models.EmailField(unique=True, verbose_name='Email')
+    name = models.CharField(max_length=NAME_MAX_LENGTH, verbose_name='Имя')
+    surname = models.CharField(
+        max_length=SURNAME_MAX_LENGTH,
+        verbose_name='Фамилия'
+    )
+    avatar = models.ImageField(
+        upload_to=USER_AVATAR_UPLOAD_TO,
+        blank=True,
+        verbose_name='Аватарка'
+    )
     phone = models.CharField(
-        max_length=12,
+        max_length=PHONE_MAX_LENGTH,
+        verbose_name='Телефон',
         validators=[
             RegexValidator(
                 regex=r'^(\+7|8)\d{10}$',
@@ -53,9 +48,14 @@ class User(AbstractUser):
     )
     github_url = models.URLField(
         blank=True,
-        validators=[validate_github_profile]
+        validators=[validate_github_profile],
+        verbose_name='GitHub'
     )
-    about = models.TextField(blank=True, max_length=256)
+    about = models.TextField(
+        blank=True,
+        max_length=ABOUT_MAX_LENGTH,
+        verbose_name='О себе'
+    )
     favorites = models.ManyToManyField(
         'Project',
         related_name='interested_users',
@@ -88,11 +88,19 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.name} {self.surname}'
 
+    def get_absolute_url(self):
+        return reverse('users:user_details', kwargs={'user_id': self.id})
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
 
 class Project(models.Model):
-    STATUS_CHOICES = [('open', 'Открыт'), ('closed', 'Закрыт')]
-
-    name = models.CharField(max_length=200, verbose_name='Название проекта')
+    name = models.CharField(
+        max_length=PROJECT_NAME_MAX_LENGTH,
+        verbose_name='Название проекта'
+    )
     description = models.TextField(blank=True, verbose_name='Описание проекта')
     owner = models.ForeignKey(
         User,
@@ -110,9 +118,9 @@ class Project(models.Model):
         verbose_name='Ссылка на Github репозиторий'
     )
     status = models.CharField(
-        max_length=6,
-        choices=STATUS_CHOICES,
-        default='open',
+        max_length=PROJECT_STATUS_MAX_LENGTH,
+        choices=PROJECT_STATUS_CHOICES,
+        default=STATUS_OPEN,
         verbose_name='Статус проекта'
     )
     participants = models.ManyToManyField(
@@ -128,6 +136,12 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse(
+            'projects:project_details',
+            kwargs={'project_id': self.id}
+        )
 
     class Meta:
         verbose_name = "Проект"
