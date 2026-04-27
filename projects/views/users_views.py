@@ -4,6 +4,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 
 from ..models import User
 from ..forms import (
@@ -57,11 +58,15 @@ def participants_list(request):
     else:
         participants = User.objects.all().order_by('id')
 
-    template = 'users/participants.html'
+    paginator = Paginator(participants, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'participants': participants,
+        'participants': page_obj,
         'active_filter': active_filter,
     }
+    template = 'users/participants.html'
     return render(request, template, context)
 
 
