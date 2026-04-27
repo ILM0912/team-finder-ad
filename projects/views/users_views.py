@@ -4,7 +4,6 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator
 
 from ..models import User
 from ..forms import (
@@ -13,6 +12,7 @@ from ..forms import (
     ChangePasswordForm,
     EditProfileForm
 )
+from .services import paginate
 
 
 USER_FILTERS = [
@@ -58,9 +58,7 @@ def participants_list(request):
     else:
         participants = User.objects.all().order_by('id')
 
-    paginator = Paginator(participants, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginate(request, participants)
 
     context = {
         'participants': page_obj,

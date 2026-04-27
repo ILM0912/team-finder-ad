@@ -68,6 +68,13 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return f'{self.name} {self.surname}'
+
     def save(self, *args, **kwargs):
         if not self.avatar and self.name:
             avatar = generate_avatar(self.name[0]+self.surname[0])
@@ -85,15 +92,8 @@ class User(AbstractUser):
                 )
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f'{self.name} {self.surname}'
-
     def get_absolute_url(self):
         return reverse('users:user_details', kwargs={'user_id': self.id})
-
-    class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
 
 
 class Project(models.Model):
@@ -130,9 +130,10 @@ class Project(models.Model):
         verbose_name='Участники проекта'
     )
 
-    @property
-    def likes_count(self):
-        return self.interested_users.count()
+    class Meta:
+        verbose_name = "Проект"
+        verbose_name_plural = "Проекты"
+        ordering = ["-created_at"]
 
     def __str__(self):
         return self.name
@@ -143,7 +144,6 @@ class Project(models.Model):
             kwargs={'project_id': self.id}
         )
 
-    class Meta:
-        verbose_name = "Проект"
-        verbose_name_plural = "Проекты"
-        ordering = ["-created_at"]
+    @property
+    def likes_count(self):
+        return self.interested_users.count()

@@ -36,6 +36,7 @@ class TeamFinderUserAdmin(UserAdmin):
 
     filter_horizontal = ('groups', 'user_permissions', 'favorites')
 
+    @admin.display(description='Аватарка')
     def avatar_preview(self, obj):
         if obj.avatar:
             return format_html(
@@ -44,8 +45,6 @@ class TeamFinderUserAdmin(UserAdmin):
             )
         return '—'
 
-    avatar_preview.short_description = 'Аватарка'
-
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
@@ -53,7 +52,6 @@ class ProjectAdmin(admin.ModelAdmin):
         'id', 'name', 'owner', 'status', 'created_at', 'participants_count'
     )
 
+    @admin.display(description='Кол-во участников')
     def participants_count(self, obj):
         return obj.participants.count()
-
-    participants_count.short_description = 'Кол-во участников'

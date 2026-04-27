@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.core.paginator import Paginator
 
 from ..models import Project
 from ..forms import ProjectForm
-from ..constants import STATUS_OPEN
+from ..constants import STATUS_OPEN, STATUS_CLOSED
+from ..services import paginate
 
 
 def project_list(request):
@@ -14,9 +14,7 @@ def project_list(request):
                 .select_related('owner')
                 .prefetch_related('participants')
                 )
-    paginator = Paginator(projects, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginate(request, projects)
 
     template = 'projects/project_list.html'
     context = {'projects': page_obj}
@@ -73,11 +71,11 @@ def complete_project(request, project_id):
             "message": "Не выполнены условия"
         })
 
-    project.status = 'closed'
+    project.status = STATUS_CLOSED
     project.save()
     return JsonResponse({
         "status": "ok",
-        "project_status": "closed"
+        "project_status": STATUS_CLOSED
     })
 
 

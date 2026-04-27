@@ -45,3 +45,6 @@ PROJECT_STATUS_CHOICES = [
 PROJECT_STATUS_MAX_LENGTH = max(
     len(status[0]) for status in PROJECT_STATUS_CHOICES
 )
+
+# views constants
+PAGE_SIZE = 12

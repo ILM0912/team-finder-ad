@@ -1,7 +1,8 @@
 import random
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
+
 from django.core.files.base import ContentFile
+from PIL import Image, ImageDraw, ImageFont
 
 from .constants import (
     AVATAR_COLORS,
